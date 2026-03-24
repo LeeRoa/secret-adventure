@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import './SecretRoom.css';
 
-export default function SecretRoom() {
+// 💡 부모 컴포넌트에서 화면 전환을 담당할 onEnd 함수를 프롭으로 받습니다.
+export default function SecretRoom({ onEnd }) {
     const [isDiaryOpen, setIsDiaryOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
@@ -9,7 +10,7 @@ export default function SecretRoom() {
     const [showMemory, setShowMemory] = useState(false);
     const [showGamePuzzle, setShowGamePuzzle] = useState(false);
     const [isGameSolved, setIsGameSolved] = useState(false);
-    const [showEnding, setShowEnding] = useState(false);
+    // showEnding 상태는 이제 페이지 전환으로 대체되므로 삭제해도 무방합니다.
 
     const [password, setPassword] = useState('');
     const [gameAnswer, setGameAnswer] = useState('');
@@ -41,7 +42,8 @@ export default function SecretRoom() {
 
     const handleChestClick = () => {
         if (isGameSolved) {
-            setShowEnding(true); // 🎲 게임을 맞혔을 때만 엔딩 오픈!
+            // 🎊 보물상자를 클릭하면 엔딩 페이지(갤러리)로 전환!
+            if (onEnd) onEnd();
         } else {
             alert("아직 상자가 꽉 잠겨있어. 보드게임의 비밀을 먼저 풀어줘! 🎲");
         }
@@ -67,7 +69,7 @@ export default function SecretRoom() {
                             {isGameSolved ? "🎲 즐거웠던 게임" : "🎲 보드게임"}
                         </div>
 
-                        {/* 💡 보물상자 클릭 이벤트 연결 */}
+                        {/* 보물상자 클릭 시 갤러리로 전환 */}
                         <div className={`placeholder-item chest ${isGameSolved ? 'glow' : ''}`} onClick={handleChestClick}>
                             {isGameSolved ? "🔓 열기!" : "🎁 보물상자"}
                         </div>
@@ -84,8 +86,7 @@ export default function SecretRoom() {
                         >
                             {isDiaryRead ? "📍 첫 데이트" : "?"}
                         </div>
-                        {/* 💡 엔딩을 보면 마지막 목적지까지 클리어! */}
-                        <div className={`checkpoint end ${showEnding ? 'cleared' : ''}`}>X</div>
+                        <div className="checkpoint end">X</div>
                     </div>
                 </section>
             </div>
@@ -104,7 +105,7 @@ export default function SecretRoom() {
                 </div>
             )}
 
-            {/* 📖 일기장 상세 (로아님이 주신 스타일 그대로!) */}
+            {/* 📖 일기장 상세 (줄눈 스타일 유지) */}
             {showDetail && (
                 <div className="diary-detail-overlay" onClick={handleCloseDiary}>
                     <div className="diary-paper" onClick={(e) => e.stopPropagation()}>
@@ -162,27 +163,6 @@ export default function SecretRoom() {
                                 } else alert("다시 생각해봐! 😂");
                             }}>정답 확인</button>
                         </div>
-                    </div>
-                </div>
-            )}
-
-            {/* 🎊 5. 최종 엔딩 모달 (편지/선물) */}
-            {showEnding && (
-                <div className="ending-overlay" onClick={() => setShowEnding(false)}>
-                    <div className="ending-card" onClick={(e) => e.stopPropagation()}>
-                        <div className="confetti-effect"></div> {/* CSS로 만드는 팡! 효과 */}
-                        <h2 className="ending-title">🎉 Adventure Clear! 🎉</h2>
-                        <div className="ending-letter">
-                            <p>축하해! 모든 수수께끼를 다 풀었어.</p>
-                            <p>우리의 추억들을 하나하나 소중히 기억해줘서 고마워.</p>
-                            <hr />
-                            <p className="final-message">
-                                사실 진짜 보물은 지금 내 앞에 있는 너야!<br/>
-                                <b>오늘 저녁 7시, 우리가 처음 갔던 그 카페에서 기다릴게.</b><br/>
-                                사랑해 ❤️
-                            </p>
-                        </div>
-                        <button className="close-btn" onClick={() => setShowEnding(false)}>모험 마치기</button>
                     </div>
                 </div>
             )}
