@@ -1,23 +1,94 @@
-/* --- 인트로 화면(초대장) 스타일 --- */
+/* --- 인트로 화면(초대장) 전체 컨테이너 --- */
 .intro-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f4ece4;
+    background-color: #f4ece4; /* 따뜻한 베이지 종이 느낌 */
+    position: relative;
+    overflow: hidden;
 }
 
+/* 🌸 Sakura-js 라이브러리가 생성하는 꽃잎 스타일 조정 */
+/* 라이브러리 기본 z-index가 높을 수 있으니 우리 콘텐츠보다 뒤로 보냅니다. */
+.sakura {
+    z-index: 1 !important;
+}
+
+/* --- 콘텐츠 래퍼 (로고 + 초대장) --- */
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 💡 로고가 커지니 초대장과의 간격도 조금 더 넓혀줍니다. */
+    gap: 8vh; /* 반응형 높이 단위 사용 */
+    animation: fadeIn 1.5s ease-in-out;
+    position: relative;
+    z-index: 10;
+}
+
+/* --- 상단 로고 영역 --- */
+.intro-logo {
+    text-align: center;
+    width: 100%; /* 부모 너비 꽉 채우기 */
+    display: flex;
+    justify-content: center;
+}
+
+.placeholder-logo {
+    /* 💡 가로 크기를 화면 너비의 40% 정도로 크게 잡습니다. (최대 400px) */
+    width: 40vw;
+    max-width: 400px; /* PC 등 큰 화면에서 너무 커지는 것 방지 */
+    min-width: 250px; /* 모바일 등 작은 화면에서 너무 작아지는 것 방지 */
+
+    /* 💡 세로 크기는 가로 크기에 맞춰 비율로 조정되거나 정해진 값을 줍니다. */
+    height: 180px;
+
+    background-color: #e8d8c8;
+    border: 3px solid #b59b85; /* 선 굵기도 살짝 키움 */
+    border-radius: 25px; /* 모서리도 더 둥글게 */
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* 💡 글씨 크기도 로고 크기에 맞춰 키웁니다. */
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #5c4033;
+
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05); /* 그림자도 더 부드럽게 */
+
+    /* 💡 나중에 실제 로고 이미지를 넣었을 때 꽉 차게 보이도록 설정 */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* --- 모바일 화면을 위한 추가 미디어 쿼리 (옵션) --- */
+/* 화면 너비가 768px 이하일 때 (모바일/태블릿) */
+@media (max-width: 768px) {
+    .placeholder-logo {
+        width: 70vw; /* 모바일에서는 화면 너비의 70% 정도로 더 크게 */
+        height: 150px; /* 높이는 살짝 줄임 */
+        font-size: 1.2rem; /* 글씨 크기 살짝 줄임 */
+    }
+    .content-wrapper {
+        gap: 5vh; /* 간격 줄임 */
+    }
+}
+
+/* --- 초대장(편지봉투) 영역 --- */
 .envelope-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
-    animation: fadeIn 1.5s ease-in-out;
+    gap: 35px;
 }
 
 .placeholder-envelope {
-    width: 320px;
-    height: 220px;
+    width: 340px;
+    height: 240px;
     background-color: #e8d8c8;
     border: 3px dashed #b59b85;
     display: flex;
@@ -26,39 +97,79 @@
     font-size: 1.2rem;
     font-weight: bold;
     color: #5c4033;
-    border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
 }
 
+/* --- 시작 버튼 --- */
 .start-button {
-    padding: 15px 40px;
+    padding: 16px 45px;
     font-size: 1.2rem;
     font-weight: bold;
     background-color: #ff9a9e;
     color: white;
     border: none;
-    border-radius: 30px;
+    border-radius: 35px;
     cursor: pointer;
-    transition: transform 0.2s, background-color 0.2s;
-    box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(255, 154, 158, 0.4);
 }
 
 .start-button:hover {
-    transform: scale(1.05);
+    transform: scale(1.08) translateY(-3px);
     background-color: #ff7e82;
+    box-shadow: 0 12px 25px rgba(255, 154, 158, 0.5);
 }
 
+/* --- 애니메이션 효과들 --- */
+
+/* 1. 처음 나타날 때 (Fade In) */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 2. 버튼 클릭 후 사라질 때 (Zoom & Fade Out) */
 .fade-out-active {
     animation: zoomAndFadeOut 1s forwards ease-in-out;
-    pointer-events: none;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    pointer-events: none; /* 클릭 중복 방지 */
 }
 
 @keyframes zoomAndFadeOut {
-    0% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0; transform: scale(1.1); }
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.15); /* 화면 안으로 빨려 들어가는 느낌 */
+    }
+}
+
+.sakura {
+    position: absolute;
+    top: -50px;
+    background: linear-gradient(120deg, rgba(255, 183, 197, 0.9), rgba(255, 197, 208, 0.8));
+    border-radius: 100% 0 100% 0; /* 벚꽃잎 모양 깎기 */
+    pointer-events: none;
+    z-index: 1;
+    animation: fall-and-shake linear forwards;
+}
+
+@keyframes fall-and-shake {
+    0% {
+        transform: translateY(0) rotate(0deg) translateX(0);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    100% {
+        transform: translateY(110vh) rotate(720deg) translateX(100px);
+        opacity: 0;
+    }
 }

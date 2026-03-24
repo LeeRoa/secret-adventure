@@ -1,12 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Intro.css';
 
 export default function Intro({ onStart }) {
     const [isFadingOut, setIsFadingOut] = useState(false);
 
+    useEffect(() => {
+        // 🌸 벚꽃 생성 로직 (Sakura-js의 핵심 로직을 리액트 버전으로 재구성)
+        const createPetal = () => {
+            const petal = document.createElement('div');
+            petal.className = 'sakura';
+
+            // 랜덤한 위치, 크기, 애니메이션 속도 설정
+            const size = Math.random() * 10 + 10 + 'px';
+            petal.style.left = Math.random() * window.innerWidth + 'px';
+            petal.style.width = size;
+            petal.style.height = size;
+            petal.style.animationDuration = Math.random() * 3 + 5 + 's'; // 5~8초 사이
+            petal.style.opacity = Math.random();
+
+            document.querySelector('.intro-container').appendChild(petal);
+
+            // 애니메이션이 끝나면 요소 제거
+            setTimeout(() => {
+                petal.remove();
+            }, 8000);
+        };
+
+        // 0.3초마다 꽃잎 하나씩 생성
+        const interval = setInterval(createPetal, 300);
+
+        return () => clearInterval(interval); // 화면 넘어가면 중지
+    }, []);
+
     const handleClick = () => {
         setIsFadingOut(true);
-        // 1초 뒤에 App.jsx에서 넘겨준 게임 시작 함수를 실행합니다.
         setTimeout(() => {
             onStart();
         }, 1000);
@@ -14,13 +41,16 @@ export default function Intro({ onStart }) {
 
     return (
         <div className={`intro-container ${isFadingOut ? 'fade-out-active' : ''}`}>
-            <div className="envelope-wrapper">
-                <div className="placeholder-envelope">
-                    💌 로아가 보내는 비밀 초대장
+            <div className="content-wrapper">
+                <header className="intro-logo">
+                    <div className="placeholder-logo">여기에 우리의 로고</div>
+                </header>
+                <div className="envelope-wrapper">
+                    <div className="placeholder-envelope">💌 로아가 보내는 비밀 초대장</div>
+                    <button className="start-button" onClick={handleClick}>
+                        비밀 여행 시작하기
+                    </button>
                 </div>
-                <button className="start-button" onClick={handleClick}>
-                    비밀 여행 시작하기
-                </button>
             </div>
         </div>
     );
