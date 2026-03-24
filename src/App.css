@@ -2,8 +2,11 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #f4ece4;
-  font-family: 'sans-serif';
+  background-color: #f0f0f0; /* 배경색도 살짝 잡아주면 좋아요 */
+}
+
+button, input {
+  font-family: inherit; /* 버튼이나 입력창도 폰트를 따라가게 합니다 */
 }
 
 .container {
