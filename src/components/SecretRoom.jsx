@@ -5,6 +5,7 @@ export default function SecretRoom() {
     const [isDiaryOpen, setIsDiaryOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
+    const [isDiaryRead, setIsDiaryRead] = useState(false);
     const [password, setPassword] = useState('');
 
     const CORRECT_PASSWORD = '250118';
@@ -15,6 +16,11 @@ export default function SecretRoom() {
         } else {
             setShowDetail(true);
         }
+    };
+
+    const handleCloseDiary = () => {
+        setShowDetail(false);
+        setIsDiaryRead(true); // 💡 일기장을 닫는 순간 "읽음"으로 표시 -> 지도 업데이트 트리거
     };
 
     const handleConfirm = () => {
@@ -53,8 +59,14 @@ export default function SecretRoom() {
                 <section className="map-area">
                     <div className="map-background">
                         <h2>우리의 보물지도</h2>
+                        {/* START는 일기장 비밀번호만 맞히면 바로 클리어 */}
                         <div className={`checkpoint start ${isDiaryOpen ? 'cleared' : ''}`}>START</div>
-                        <div className="checkpoint point1">첫 만남</div>
+
+                        {/* 💡 일기장을 닫는 순간 'unlocked' 클래스가 붙으며 애니메이션 시작 */}
+                        <div className={`checkpoint point1 ${isDiaryRead ? 'unlocked' : ''}`}>
+                            {isDiaryRead ? "📍 첫 만남의 장소" : "?"}
+                        </div>
+
                         <div className="checkpoint end">X</div>
                     </div>
                 </section>
@@ -85,7 +97,7 @@ export default function SecretRoom() {
             {showDetail && (
                 <div className="diary-detail-overlay" onClick={() => setShowDetail(false)}>
                     <div className="diary-paper" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-diary" onClick={() => setShowDetail(false)}>X</button>
+                        <button className="close-diary" onClick={handleCloseDiary}>X</button>
 
                         <div className="diary-content">
                             <div className="diary-left">
