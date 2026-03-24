@@ -2,24 +2,26 @@ import { useState } from 'react';
 import './SecretRoom.css';
 
 export default function SecretRoom() {
-    const [isDiaryOpen, setIsDiaryOpen] = useState(false); // 일기장이 열렸는지
-    const [isModalOpen, setIsModalOpen] = useState(false); // 모달창이 떴는지
-    const [password, setPassword] = useState(''); // 입력한 비밀번호
+    const [isDiaryOpen, setIsDiaryOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showDetail, setShowDetail] = useState(false);
+    const [password, setPassword] = useState('');
 
-    // 💡 정답 설정 (예: 2024년 5월 20일 -> 240520)
     const CORRECT_PASSWORD = '250118';
 
     const handleDiaryClick = () => {
         if (!isDiaryOpen) {
-            setIsModalOpen(true); // 닫혀있을 때만 모달 열기
+            setIsModalOpen(true);
+        } else {
+            setShowDetail(true);
         }
     };
 
     const handleConfirm = () => {
         if (password === CORRECT_PASSWORD) {
-            alert("정답이야! 일기장이 열렸어. ✨");
             setIsDiaryOpen(true);
             setIsModalOpen(false);
+            setShowDetail(true);
             setPassword('');
         } else {
             alert("음... 다시 한번 생각해봐! 🤔");
@@ -34,21 +36,20 @@ export default function SecretRoom() {
             </header>
 
             <div className="main-content">
-                {/* 왼쪽: 비밀의 방 */}
                 <section className="room-area">
                     <div className="desk-background">
                         <div
                             className={`placeholder-item diary ${isDiaryOpen ? 'open' : ''}`}
                             onClick={handleDiaryClick}
                         >
-                            {isDiaryOpen ? "열린 일기장📖" : "잠긴 일기장🔒"}
+                            {isDiaryOpen ? "📖 우리의 추억" : "🔒 잠긴 일기장"}
                         </div>
-                        <div className="placeholder-item candle">촛대</div>
-                        <div className="placeholder-item chest">보물상자</div>
+                        {/* 촛대, 보물상자 등 다른 소품 영역들 */}
+                        <div className="placeholder-item candle">🕯️ 촛대</div>
+                        <div className="placeholder-item chest">🎁 보물상자</div>
                     </div>
                 </section>
 
-                {/* 오른쪽: 보물지도 */}
                 <section className="map-area">
                     <div className="map-background">
                         <h2>우리의 보물지도</h2>
@@ -61,9 +62,9 @@ export default function SecretRoom() {
 
             {/* 🔐 비밀번호 입력 모달창 */}
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h3>🔒 비밀번호를 입력해줘</h3>
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h3>🔒 비밀번호 입력</h3>
                         <p>우리가 처음 만난 날은 언제일까? (YYMMDD)</p>
                         <input
                             type="text"
@@ -75,6 +76,38 @@ export default function SecretRoom() {
                         <div className="modal-buttons">
                             <button onClick={handleConfirm}>확인</button>
                             <button onClick={() => setIsModalOpen(false)}>닫기</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 📖 펴진 일기장 상세 보기 */}
+            {showDetail && (
+                <div className="diary-detail-overlay" onClick={() => setShowDetail(false)}>
+                    <div className="diary-paper" onClick={(e) => e.stopPropagation()}>
+                        <button className="close-diary" onClick={() => setShowDetail(false)}>X</button>
+
+                        <div className="diary-content">
+                            <div className="diary-left">
+                                <div className="photo-frame">
+                                    <div className="photo-placeholder">📸 우리의 첫 여행 사진</div>
+                                </div>
+                                <div className="photo-frame second">
+                                    <div className="photo-placeholder">📸 웃고 있는 우리</div>
+                                </div>
+                            </div>
+
+                            <div className="diary-right">
+                                <h2 className="handwriting-title">2026년 3월 24일</h2>
+                                <p className="handwriting-text">
+                                    안녕? 드디어 일기장을 열었네!<br/><br/>
+                                    우리가 함께한 시간들이 벌써 이만큼이나 쌓였어.
+                                    처음 만났던 날의 떨림부터, 같이 웃고 울었던
+                                    모든 순간이 나에겐 보물 같아.<br/><br/>
+                                    지도의 다음 목적지에도 네가 좋아할 선물을 준비했어.
+                                    어서 가보자! 사랑해 ❤️
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
