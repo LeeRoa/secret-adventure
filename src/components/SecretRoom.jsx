@@ -6,21 +6,19 @@ export default function SecretRoom() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
     const [isDiaryRead, setIsDiaryRead] = useState(false);
+    const [showMemory, setShowMemory] = useState(false);
+    const [showGamePuzzle, setShowGamePuzzle] = useState(false);
+    const [isGameSolved, setIsGameSolved] = useState(false);
+
     const [password, setPassword] = useState('');
+    const [gameAnswer, setGameAnswer] = useState('');
 
     const CORRECT_PASSWORD = '250118';
+    const CORRECT_GAME = '튜링머신';
 
     const handleDiaryClick = () => {
-        if (!isDiaryOpen) {
-            setIsModalOpen(true);
-        } else {
-            setShowDetail(true);
-        }
-    };
-
-    const handleCloseDiary = () => {
-        setShowDetail(false);
-        setIsDiaryRead(true); // 💡 일기장을 닫는 순간 "읽음"으로 표시 -> 지도 업데이트 트리거
+        if (!isDiaryOpen) setIsModalOpen(true);
+        else setShowDetail(true);
     };
 
     const handleConfirm = () => {
@@ -35,6 +33,11 @@ export default function SecretRoom() {
         }
     };
 
+    const handleCloseDiary = () => {
+        setShowDetail(false);
+        setIsDiaryRead(true);
+    };
+
     return (
         <div className="container fade-in-active">
             <header className="banner">
@@ -44,61 +47,57 @@ export default function SecretRoom() {
             <div className="main-content">
                 <section className="room-area">
                     <div className="desk-background">
-                        <div
-                            className={`placeholder-item diary ${isDiaryOpen ? 'open' : ''}`}
-                            onClick={handleDiaryClick}
-                        >
+                        <div className={`placeholder-item diary ${isDiaryOpen ? 'open' : ''}`} onClick={handleDiaryClick}>
                             {isDiaryOpen ? "📖 우리의 추억" : "🔒 잠긴 일기장"}
                         </div>
-                        {/* 촛대, 보물상자 등 다른 소품 영역들 */}
-                        <div className="placeholder-item candle">🕯️ 촛대</div>
-                        <div className="placeholder-item chest">🎁 보물상자</div>
+
+                        <div
+                            className={`placeholder-item board-game ${isGameSolved ? 'solved' : ''}`}
+                            onClick={() => isDiaryRead ? setShowGamePuzzle(true) : alert("지도를 먼저 확인해봐! 🗺️")}
+                        >
+                            {isGameSolved ? "🎲 즐거웠던 게임" : "🎲 보드게임"}
+                        </div>
+
+                        <div className={`placeholder-item chest ${isGameSolved ? 'glow' : ''}`}>
+                            {isGameSolved ? "🔓 열릴 것 같은 상자" : "🎁 보물상자"}
+                        </div>
                     </div>
                 </section>
 
                 <section className="map-area">
                     <div className="map-background">
                         <h2>우리의 보물지도</h2>
-                        {/* START는 일기장 비밀번호만 맞히면 바로 클리어 */}
                         <div className={`checkpoint start ${isDiaryOpen ? 'cleared' : ''}`}>START</div>
-
-                        {/* 💡 일기장을 닫는 순간 'unlocked' 클래스가 붙으며 애니메이션 시작 */}
-                        <div className={`checkpoint point1 ${isDiaryRead ? 'unlocked' : ''}`}>
-                            {isDiaryRead ? "📍 첫 만남의 장소" : "?"}
+                        <div
+                            className={`checkpoint point1 ${isDiaryRead ? 'unlocked' : ''}`}
+                            onClick={() => isDiaryRead && setShowMemory(true)}
+                        >
+                            {isDiaryRead ? "📍 첫 데이트" : "?"}
                         </div>
-
                         <div className="checkpoint end">X</div>
                     </div>
                 </section>
             </div>
 
-            {/* 🔐 비밀번호 입력 모달창 */}
+            {/* 🔐 비밀번호 입력 모달 */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3>🔒 비밀번호 입력</h3>
-                        <p>우리가 처음 만난 날은 언제일까? (YYMMDD)</p>
-                        <input
-                            type="text"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="여기에 입력..."
-                            maxLength={6}
-                        />
+                        <p>우리가 처음 만난 날은? (YYMMDD)</p>
+                        <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} maxLength={6} placeholder="날짜를 입력해줘❤️" />
                         <div className="modal-buttons">
                             <button onClick={handleConfirm}>확인</button>
-                            <button onClick={() => setIsModalOpen(false)}>닫기</button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* 📖 펴진 일기장 상세 보기 */}
+            {/* 📖 일기장 상세 (로아님이 주신 스타일 그대로!) */}
             {showDetail && (
-                <div className="diary-detail-overlay" onClick={() => setShowDetail(false)}>
+                <div className="diary-detail-overlay" onClick={handleCloseDiary}>
                     <div className="diary-paper" onClick={(e) => e.stopPropagation()}>
                         <button className="close-diary" onClick={handleCloseDiary}>X</button>
-
                         <div className="diary-content">
                             <div className="diary-left">
                                 <div className="photo-frame">
@@ -108,7 +107,6 @@ export default function SecretRoom() {
                                     <div className="photo-placeholder">📸 웃고 있는 우리</div>
                                 </div>
                             </div>
-
                             <div className="diary-right">
                                 <h2 className="handwriting-title">2026년 3월 24일</h2>
                                 <p className="handwriting-text">
@@ -120,6 +118,38 @@ export default function SecretRoom() {
                                     어서 가보자! 사랑해 ❤️
                                 </p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 📍 지도 클릭 추억 팝업 */}
+            {showMemory && (
+                <div className="modal-overlay" onClick={() => setShowMemory(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h3>📍 첫 데이트의 기억</h3>
+                        <p>"그날 보드게임 카페 기억나?<br/>네가 이기려고 집중하던 그 표정이 생각나!"</p>
+                        <div className="modal-buttons">
+                            <button onClick={() => setShowMemory(false)}>추억 간직하기</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 🎲 보드게임 퀴즈 팝업 */}
+            {showGamePuzzle && (
+                <div className="modal-overlay" onClick={() => setShowGamePuzzle(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h3>🎲 보드게임 퀴즈</h3>
+                        <p>우리가 처음으로 함께 했던<br/>보드게임의 이름은?</p>
+                        <input type="text" value={gameAnswer} onChange={(e) => setGameAnswer(e.target.value)} placeholder="보드게임 이름을 입력해줘❤️" />
+                        <div className="modal-buttons">
+                            <button onClick={() => {
+                                if(gameAnswer === CORRECT_GAME) {
+                                    setIsGameSolved(true);
+                                    setShowGamePuzzle(false);
+                                } else alert("다시 생각해봐! 😂");
+                            }}>정답 확인</button>
                         </div>
                     </div>
                 </div>
