@@ -215,6 +215,10 @@ export default function SecretRoom({ onEnd }) {
                         </div>
                     </div>
                 </section>
+
+                <div className="search-deco">
+                    <img src="/images/search.png" alt="수색 중인 귀여운 짱구와 철수" />
+                </div>
             </div>
 
             {/* --- 모달/상세창 구성 --- */}
