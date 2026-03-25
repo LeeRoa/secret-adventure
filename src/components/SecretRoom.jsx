@@ -79,19 +79,48 @@ export default function SecretRoom({ onEnd }) {
             <div className="main-content">
                 <section className="room-area">
                     <div className="desk-background">
-                        <div className={`placeholder-item diary ${isDiaryOpen ? 'open' : ''}`} onClick={handleDiaryClick}>
-                            {isDiaryOpen ? "📖 우리의 추억" : "🔒 잠긴 일기장"}
+                        <div
+                            className={`placeholder-item diary ${isDiaryOpen ? 'open' : ''}`}
+                            onClick={handleDiaryClick}
+                        >
+                            {/* 💡 조건부 렌더링: 일기장 상태에 따라 이미지 교체 */}
+                            {isDiaryOpen ? (
+                                <img
+                                    src="/images/unlock_diary.png"  /* 👈 누끼 딴 일기장 펼쳐진 이미지 (혹은 준비한 이미지) */
+                                    alt="열린 일기장"
+                                    className="item-image"
+                                />
+                            ) : (
+                                <img
+                                    src="/images/lock_diary.png" /* 👈 잠긴 일기장 이미지 */
+                                    alt="잠긴 일기장"
+                                    className="item-image"
+                                />
+                            )}
                         </div>
 
                         <div
-                            className={`placeholder-item board-game ${isGameSolved ? 'open' : ''}`} //Solved 대신 open으로 스타일 통일
+                            className={`placeholder-item board-game ${isGameSolved ? 'open' : ''}`}
                             onClick={handleGameClick}
                         >
-                            {isGameSolved ? "🎲 즐거웠던 게임" : "🎲 보드게임"}
+                            {/* 💡 보드게임도 정답을 맞혔을 때 이미지를 다르게 줄 수 있어요 */}
+                            <img
+                                src={isGameSolved ? "/images/board_game.png" : "/images/board_game.png"}
+                                alt="보드게임"
+                                className="item-image"
+                            />
                         </div>
 
-                        <div className={`placeholder-item chest ${isGameSolved ? 'glow' : ''}`} onClick={handleChestClick}>
-                            {isGameSolved ? "🔓 열기!" : "🎁 보물상자"}
+                        <div
+                            className={`placeholder-item chest ${isGameSolved ? 'glow' : ''}`}
+                            onClick={handleChestClick}
+                        >
+                            {/* 💡 secret_box.png 적용! 정답을 맞히면 glow 효과가 CSS에서 나타납니다 */}
+                            <img
+                                src="/images/lock_box.png"
+                                alt="보물상자"
+                                className="item-image"
+                            />
                         </div>
                     </div>
                 </section>
