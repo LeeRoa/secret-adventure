@@ -43,8 +43,7 @@ export default function Intro({ onStart }) {
         <div className={`intro-container ${isFadingOut ? 'fade-out-active' : ''}`}>
             <div className="content-wrapper">
                 <header className="intro-logo">
-                    {/* 우리의 로고도 그림으로 대체할 수 있습니다 */}
-                    <div className="placeholder-logo">R & N</div>
+                    <img src="/images/logo.png" alt="로고" />
                 </header>
 
                 {/* 💌 초대장 캐릭터 카드 영역 (수정됨) */}
