@@ -35,14 +35,14 @@ export default function SecretRoom({ onEnd }) {
     const handleStartClick = () => {
         if (!isStartClicked) {
             setIsStartClicked(true);
-            showAlert("모험이 시작되었어! 책상 위의 일기장을 먼저 확인해봐! 📖");
+            showAlert("모험이 시작되었어! 책상 위의 일기장을 먼저 확인해봐!");
         }
     };
 
     // 📖 [STEP 2] 일기장 클릭 (START 이후 가능)
     const handleDiaryClick = () => {
         if (!isStartClicked) {
-            showAlert("지도의 START 지점을 먼저 눌러서 모험을 시작해줘! 🗺️");
+            showAlert("지도의 START 지점을 먼저 눌러서 모험을 시작해줘!");
             return;
         }
         if (!isDiaryOpen) setIsModalOpen(true);
@@ -73,7 +73,7 @@ export default function SecretRoom({ onEnd }) {
         if (isDiaryRead) {
             setShowMemory(true);
         } else {
-            showAlert("START 지점의 일기장을 먼저 읽어봐야 해! 📖");
+            showAlert("START 지점의 일기장을 먼저 읽어봐야 해!");
         }
     };
 
@@ -85,7 +85,7 @@ export default function SecretRoom({ onEnd }) {
     // 🎲 [STEP 4] 보드게임 클릭 (📍 확인 후 가능)
     const handleGameClick = () => {
         if (!isMemoryChecked) {
-            showAlert("지도의 '첫 데이트(📍)' 지점을 먼저 확인해봐! 🗺️");
+            showAlert("지도의 '첫 데이트' 지점을 먼저 확인해봐!");
             return;
         }
         if (isGameSolved) setShowGameDetail(true);
@@ -111,9 +111,9 @@ export default function SecretRoom({ onEnd }) {
     const handleFinalPointClick = () => {
         if (isGameRead) {
             setIsFinalPointReached(true);
-            showAlert("정답이야! 🎯 마지막 목적지에 도착했어! 이제 보물상자를 열어봐! 🎁");
+            showAlert("정답이야! 마지막 목적지에 도착했어! 이제 보물상자를 열어봐! 🎁");
         } else {
-            showAlert("보드게임의 비밀을 먼저 풀어야 이 지점에 올 수 있어! 🎲");
+            showAlert("보드게임의 비밀을 먼저 풀어야 이 지점에 올 수 있어!");
         }
     };
 
@@ -123,7 +123,7 @@ export default function SecretRoom({ onEnd }) {
             setIsFakeClicked(true); // 상태를 꽝으로 변경!
             showAlert("앗! 꽝이야 😜 여긴 가짜 보물이 숨겨져 있어. 다른 'X'를 찾아봐!");
         } else {
-            showAlert("보드게임의 비밀을 먼저 풀어야 해! 🎲");
+            showAlert("보드게임의 비밀을 먼저 풀어야 해!");
         }
     };
 
@@ -132,16 +132,12 @@ export default function SecretRoom({ onEnd }) {
         if (isFinalPointReached) {
             onEnd(); // 최종 엔딩 화면으로
         } else {
-            showAlert("지도의 마지막 목적지(X)를 먼저 찾아야 상자가 열릴 것 같아! 🗺️");
+            showAlert("지도의 마지막 목적지(X)를 먼저 찾아야 상자가 열릴 것 같아!");
         }
     };
 
     return (
         <div className="container fade-in-active">
-            <header className="banner">
-                <h1>OUR SECRET ADVENTURE</h1>
-            </header>
-
             <div className="main-content">
                 <section className="room-area">
                     <div className="desk-background">
