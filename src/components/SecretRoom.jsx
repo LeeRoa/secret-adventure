@@ -73,7 +73,7 @@ export default function SecretRoom({ onEnd }) {
         if (isDiaryRead) {
             setShowMemory(true);
         } else {
-            showAlert("START 지점의 일기장을 먼저 읽어봐야 해!");
+            showAlert("이전 미션을 먼저 풀어야 해!");
         }
     };
 
@@ -113,7 +113,7 @@ export default function SecretRoom({ onEnd }) {
             setIsFinalPointReached(true);
             showAlert("정답이야! 마지막 목적지에 도착했어! 이제 보물상자를 열어봐! 🎁");
         } else {
-            showAlert("보드게임의 비밀을 먼저 풀어야 이 지점에 올 수 있어!");
+            showAlert("이전 미션을 먼저 풀어야 해!");
         }
     };
 
@@ -123,7 +123,7 @@ export default function SecretRoom({ onEnd }) {
             setIsFakeClicked(true); // 상태를 꽝으로 변경!
             showAlert("앗! 꽝이야 😜 여긴 가짜 보물이 숨겨져 있어. 다른 'X'를 찾아봐!");
         } else {
-            showAlert("보드게임의 비밀을 먼저 풀어야 해!");
+            showAlert("이전 미션을 먼저 풀어야 해!");
         }
     };
 
