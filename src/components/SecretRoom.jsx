@@ -19,6 +19,7 @@ export default function SecretRoom({ onEnd }) {
     const [showMemory, setShowMemory] = useState(false);               // 📍 첫 데이트 모달
     const [showGamePuzzle, setShowGamePuzzle] = useState(false);       // 🎲 퀴즈 입력창
     const [showGameDetail, setShowGameDetail] = useState(false);       // 🎲 추억 상세
+    const [messageModal, setMessageModal] = useState({ open: false, content: '' });
 
     const [password, setPassword] = useState('');
     const [gameAnswer, setGameAnswer] = useState('');
@@ -26,18 +27,22 @@ export default function SecretRoom({ onEnd }) {
     const CORRECT_PASSWORD = '250118';
     const CORRECT_GAME = '튜링머신';
 
+    const showAlert = (content) => {
+        setMessageModal({ open: true, content });
+    };
+
     // 🚩 [STEP 1] 지도 START 클릭
     const handleStartClick = () => {
         if (!isStartClicked) {
             setIsStartClicked(true);
-            alert("모험이 시작되었어! 책상 위의 일기장을 먼저 확인해봐! 📖");
+            showAlert("모험이 시작되었어! 책상 위의 일기장을 먼저 확인해봐! 📖");
         }
     };
 
     // 📖 [STEP 2] 일기장 클릭 (START 이후 가능)
     const handleDiaryClick = () => {
         if (!isStartClicked) {
-            alert("지도의 START 지점을 먼저 눌러서 모험을 시작해줘! 🗺️");
+            showAlert("지도의 START 지점을 먼저 눌러서 모험을 시작해줘! 🗺️");
             return;
         }
         if (!isDiaryOpen) setIsModalOpen(true);
@@ -47,11 +52,13 @@ export default function SecretRoom({ onEnd }) {
     const handleConfirm = () => {
         if (password === CORRECT_PASSWORD) {
             setIsDiaryOpen(true);
-            setIsModalOpen(false);
+            setIsModalOpen(false); // 맞았을 때 닫기
             setShowDetail(true);
             setPassword('');
         } else {
-            alert("음... 다시 한번 생각해봐! 🤔");
+            // 💡 틀렸을 때도 일단 비밀번호 입력창을 닫고 알림창을 보여줍니다.
+            setIsModalOpen(false);
+            showAlert("음... 다시 한번 생각해봐! 🤔");
             setPassword('');
         }
     };
@@ -66,7 +73,7 @@ export default function SecretRoom({ onEnd }) {
         if (isDiaryRead) {
             setShowMemory(true);
         } else {
-            alert("START 지점의 일기장을 먼저 읽어봐야 해! 📖");
+            showAlert("START 지점의 일기장을 먼저 읽어봐야 해! 📖");
         }
     };
 
@@ -78,7 +85,7 @@ export default function SecretRoom({ onEnd }) {
     // 🎲 [STEP 4] 보드게임 클릭 (📍 확인 후 가능)
     const handleGameClick = () => {
         if (!isMemoryChecked) {
-            alert("지도의 '첫 데이트(📍)' 지점을 먼저 확인해봐! 🗺️");
+            showAlert("지도의 '첫 데이트(📍)' 지점을 먼저 확인해봐! 🗺️");
             return;
         }
         if (isGameSolved) setShowGameDetail(true);
@@ -91,7 +98,7 @@ export default function SecretRoom({ onEnd }) {
             setShowGamePuzzle(false);
             setShowGameDetail(true);
         } else {
-            alert("다시 생각해봐! 😂");
+            showAlert("다시 생각해봐! 😂");
         }
     };
 
@@ -104,9 +111,9 @@ export default function SecretRoom({ onEnd }) {
     const handleFinalPointClick = () => {
         if (isGameRead) {
             setIsFinalPointReached(true);
-            alert("정답이야! 🎯 마지막 목적지에 도착했어! 이제 보물상자를 열어봐! 🎁");
+            showAlert("정답이야! 🎯 마지막 목적지에 도착했어! 이제 보물상자를 열어봐! 🎁");
         } else {
-            alert("보드게임의 비밀을 먼저 풀어야 이 지점에 올 수 있어! 🎲");
+            showAlert("보드게임의 비밀을 먼저 풀어야 이 지점에 올 수 있어! 🎲");
         }
     };
 
@@ -114,9 +121,9 @@ export default function SecretRoom({ onEnd }) {
     const handleFakePointClick = () => {
         if (isGameRead) {
             setIsFakeClicked(true); // 상태를 꽝으로 변경!
-            alert("앗! 꽝이야 😜 여긴 가짜 보물이 숨겨져 있어. 다른 'X'를 찾아봐!");
+            showAlert("앗! 꽝이야 😜 여긴 가짜 보물이 숨겨져 있어. 다른 'X'를 찾아봐!");
         } else {
-            alert("보드게임의 비밀을 먼저 풀어야 해! 🎲");
+            showAlert("보드게임의 비밀을 먼저 풀어야 해! 🎲");
         }
     };
 
@@ -125,7 +132,7 @@ export default function SecretRoom({ onEnd }) {
         if (isFinalPointReached) {
             onEnd(); // 최종 엔딩 화면으로
         } else {
-            alert("지도의 마지막 목적지(X)를 먼저 찾아야 상자가 열릴 것 같아! 🗺️");
+            showAlert("지도의 마지막 목적지(X)를 먼저 찾아야 상자가 열릴 것 같아! 🗺️");
         }
     };
 
@@ -211,11 +218,22 @@ export default function SecretRoom({ onEnd }) {
             </div>
 
             {/* --- 모달/상세창 구성 --- */}
+            {messageModal.open && (
+                <div className="modal-overlay" onClick={() => setMessageModal({ open: false, content: '' })}>
+                    <div className="modal-content message-modal" onClick={(e) => e.stopPropagation()}>
+                        <p className="message-text">{messageModal.content}</p>
+                        <div className="modal-buttons">
+                            <button onClick={() => setMessageModal({ open: false, content: '' })}>확인</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {isModalOpen && (
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3>🔒 비밀번호 입력</h3>
-                        <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} maxLength={6} placeholder="yymmdd" />
+                        <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} maxLength={6} placeholder="틀리면 죽어" />
                         <div className="modal-buttons"><button onClick={handleConfirm}>확인</button></div>
                     </div>
                 </div>
