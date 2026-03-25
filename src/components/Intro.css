@@ -83,22 +83,65 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 35px;
+    gap: 20px; /* 이미지와 시작 버튼 사이 간격 */
+    position: relative; /* 💡 글씨를 이미지 위에 올리기 위한 기준점 */
 }
 
-.placeholder-envelope {
-    width: 340px;
-    height: 240px;
-    background-color: #e8d8c8;
-    border: 3px dashed #b59b85;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
+/* 💌 캐릭터 카드 영역 스타일 잡기 */
+.envelope-wrapper.character-card {
+    position: relative; /* 💡 텍스트 위치의 기준점이 됩니다 */
+    width: 100%; max-width: 320px; /* 이미지 크기에 맞춘 카드 너비 */
+    margin-top: 50px;
+    padding: 10px;
+    background-color: transparent; /* 이미지가 돋보이게 */
+    text-align: center;
+    animation: float 2s infinite ease-in-out; /* 둥둥 떠 있는 효과 */
+}
+
+.character-image {
+    width: 100%;
+    height: auto;
+    border-radius: 50px; /* 이미지 모서리 둥글게 */
+    /* 부드러운 그림자 */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+}
+
+.heart-text {
+    position: absolute;
+    /* 💡 이미지의 하트 위치를 조준합니다!
+       이미지 세로 크기의 약 65% 지점, 가로 중앙에 배치 */
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 정확히 하트 중앙 정렬 */
+
+    font-family: 'Jua', sans-serif !important; /* 가독성 좋은 폰트 추천 */
+    font-size: 1.2rem; /* 하트 크기에 맞춘 글자 크기 */
+    color: black;
     font-weight: bold;
-    color: #5c4033;
-    border-radius: 12px;
+    text-shadow:
+            -2px -2px 0 #fff,
+            2px -2px 0 #fff,
+            -2px  2px 0 #fff,
+            2px  2px 0 #fff,
+            0px -2px 0 #fff,
+            0px  2px 0 #fff,
+            -2px  0px 0 #fff,
+            2px  0px 0 #fff,
+            2px 2px 10px rgba(0,0,0,0.1);
+
+    width: 70%; /* 텍스트가 하트 밖으로 나가지 않게 너비 제한 */
+    z-index: 12;
+    pointer-events: none; /* 글씨 때문에 클릭이 안 되는 현상 방지 */
+}
+
+/* 🐶 강아지 이미지 스타일 */
+.envelope-image {
+    width: 340px; /* 기존 placeholder와 동일한 크기 유지 */
+    height: auto;
+    border-radius: 20px;
     box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    /* 💡 이미지가 배경에 묻히지 않도록 살짝 테두리를 줍니다 (선택사항) */
+    border: 5px solid white;
 }
 
 /* --- 시작 버튼 --- */
@@ -124,6 +167,12 @@
 /* --- 애니메이션 효과들 --- */
 
 /* 1. 처음 나타날 때 (Fade In) */
+/* 둥둥 떠 있는 애니메이션 */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;

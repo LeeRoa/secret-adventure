@@ -43,14 +43,24 @@ export default function Intro({ onStart }) {
         <div className={`intro-container ${isFadingOut ? 'fade-out-active' : ''}`}>
             <div className="content-wrapper">
                 <header className="intro-logo">
-                    <div className="placeholder-logo">여기에 우리의 로고</div>
+                    {/* 우리의 로고도 그림으로 대체할 수 있습니다 */}
+                    <div className="placeholder-logo">R & N</div>
                 </header>
-                <div className="envelope-wrapper">
-                    <div className="placeholder-envelope">💌 로아가 보내는 비밀 초대장</div>
-                    <button className="start-button" onClick={handleClick}>
-                        비밀 여행 시작하기
-                    </button>
+
+                {/* 💌 초대장 캐릭터 카드 영역 (수정됨) */}
+                {/* 💡 envelope-wrapper character-card로 기준점을 잡습니다 */}
+                <div className="envelope-wrapper character-card">
+                    {/* 💡 이미지는 기준점 안에 꽉 차게 배치합니다 */}
+                    <img src="/images/envelope.jpg" alt="초대장 캐릭터" className="character-image" />
+
+                    {/* 💡 중요: 텍스트를 이미지 하트 영역 위에 absolute로 띄웁니다 */}
+                    <div className="heart-text">💌 로아가 보내는 비밀 초대장</div>
                 </div>
+
+                {/* 버튼은 카드 영역 밖에 배치해서 깔끔하게 만듭니다 */}
+                <button className="start-button" onClick={handleClick}>
+                    비밀 여행 시작하기
+                </button>
             </div>
         </div>
     );
