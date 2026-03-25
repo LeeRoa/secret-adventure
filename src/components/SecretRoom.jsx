@@ -2,14 +2,23 @@ import { useState } from 'react';
 import './SecretRoom.css';
 
 export default function SecretRoom({ onEnd }) {
-    const [isDiaryOpen, setIsDiaryOpen] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [showDetail, setShowDetail] = useState(false);
-    const [isDiaryRead, setIsDiaryRead] = useState(false);
-    const [showMemory, setShowMemory] = useState(false);
-    const [showGamePuzzle, setShowGamePuzzle] = useState(false);
-    const [showGameDetail, setShowGameDetail] = useState(false); // 💡 보드게임 상세 내용 상태 추가
-    const [isGameSolved, setIsGameSolved] = useState(false);
+    // --- 퀘스트 진행 상태 (순차적 해금 로직) ---
+    const [isStartClicked, setIsStartClicked] = useState(false);       // 1. 지도 START
+    const [isDiaryOpen, setIsDiaryOpen] = useState(false);             // 2. 일기장 비밀번호 통과
+    const [isDiaryRead, setIsDiaryRead] = useState(false);             // 3. 일기장 정독 완료 (📍 활성화)
+
+    const [isMemoryChecked, setIsMemoryChecked] = useState(false);     // 4. 📍 첫 데이트 확인 완료 (🎲 활성화)
+    const [isGameSolved, setIsGameSolved] = useState(false);           // 5. 보드게임 정답 통과
+    const [isGameRead, setIsGameRead] = useState(false);               // 6. 보드게임 추억 정독 완료 (X 활성화)
+
+    const [isFinalPointReached, setIsFinalPointReached] = useState(false); // 7. 지도의 X 클릭 (🎁 해금)
+
+    // --- UI 모달 상태 ---
+    const [isModalOpen, setIsModalOpen] = useState(false);             // 비밀번호 입력창
+    const [showDetail, setShowDetail] = useState(false);               // 일기장 상세
+    const [showMemory, setShowMemory] = useState(false);               // 📍 첫 데이트 모달
+    const [showGamePuzzle, setShowGamePuzzle] = useState(false);       // 🎲 퀴즈 입력창
+    const [showGameDetail, setShowGameDetail] = useState(false);       // 🎲 추억 상세
 
     const [password, setPassword] = useState('');
     const [gameAnswer, setGameAnswer] = useState('');
@@ -17,8 +26,20 @@ export default function SecretRoom({ onEnd }) {
     const CORRECT_PASSWORD = '250118';
     const CORRECT_GAME = '튜링머신';
 
-    // --- 일기장 관련 함수 ---
+    // 🚩 [STEP 1] 지도 START 클릭
+    const handleStartClick = () => {
+        if (!isStartClicked) {
+            setIsStartClicked(true);
+            alert("모험이 시작되었어! 책상 위의 일기장을 먼저 확인해봐! 📖");
+        }
+    };
+
+    // 📖 [STEP 2] 일기장 클릭 (START 이후 가능)
     const handleDiaryClick = () => {
+        if (!isStartClicked) {
+            alert("지도의 START 지점을 먼저 눌러서 모험을 시작해줘! 🗺️");
+            return;
+        }
         if (!isDiaryOpen) setIsModalOpen(true);
         else setShowDetail(true);
     };
@@ -37,36 +58,64 @@ export default function SecretRoom({ onEnd }) {
 
     const handleCloseDiary = () => {
         setShowDetail(false);
-        setIsDiaryRead(true);
+        setIsDiaryRead(true); // 💡 결과: 지도의 📍 활성화
     };
 
-    // --- 보드게임 관련 함수 ---
-    const handleGameClick = () => {
-        if (isGameSolved) {
-            setShowGameDetail(true); // 이미 풀었다면 바로 내용 보기
-        } else if (isDiaryRead) {
-            setShowGamePuzzle(true);
+    // 📍 [STEP 3] 첫 데이트(📍) 클릭 (일기장 정독 후 가능)
+    const handlePoint1Click = () => {
+        if (isDiaryRead) {
+            setShowMemory(true);
         } else {
-            alert("지도를 먼저 확인해봐! 🗺️");
+            alert("START 지점의 일기장을 먼저 읽어봐야 해! 📖");
         }
+    };
+
+    const handleCloseMemory = () => {
+        setShowMemory(false);
+        setIsMemoryChecked(true); // 💡 결과: 보드게임(🎲) 활성화
+    };
+
+    // 🎲 [STEP 4] 보드게임 클릭 (📍 확인 후 가능)
+    const handleGameClick = () => {
+        if (!isMemoryChecked) {
+            alert("지도의 '첫 데이트(📍)' 지점을 먼저 확인해봐! 🗺️");
+            return;
+        }
+        if (isGameSolved) setShowGameDetail(true);
+        else setShowGamePuzzle(true);
     };
 
     const handleGameConfirm = () => {
         if (gameAnswer.trim() === CORRECT_GAME) {
             setIsGameSolved(true);
             setShowGamePuzzle(false);
-            setShowGameDetail(true); // 💡 정답을 맞히면 바로 상세 페이지 오픈!
+            setShowGameDetail(true);
         } else {
             alert("다시 생각해봐! 😂");
         }
     };
 
-    // --- 보물상자 ---
-    const handleChestClick = () => {
-        if (isGameSolved) {
-            onEnd();
+    const handleCloseGameDetail = () => {
+        setShowGameDetail(false);
+        setIsGameRead(true); // 💡 결과: 지도의 X 활성화
+    };
+
+    // ❌ [STEP 5] 최종 목적지 X 클릭 (보드게임 정독 후 가능)
+    const handleFinalPointClick = () => {
+        if (isGameRead) {
+            setIsFinalPointReached(true);
+            alert("드디어 마지막 목적지에 도착했어! 이제 보물상자를 열어봐! 🎁");
         } else {
-            alert("아직 상자가 꽉 잠겨있어. 보드게임의 비밀을 먼저 풀어줘! 🎲");
+            alert("보드게임의 비밀을 먼저 풀어야 이 지점에 올 수 있어! 🎲");
+        }
+    };
+
+    // 🎁 [STEP 6] 보물상자 클릭 (X 도달 후 가능)
+    const handleChestClick = () => {
+        if (isFinalPointReached) {
+            onEnd(); // 최종 엔딩 화면으로
+        } else {
+            alert("지도의 마지막 목적지(X)를 먼저 찾아야 상자가 열릴 것 같아! 🗺️");
         }
     };
 
@@ -79,96 +128,90 @@ export default function SecretRoom({ onEnd }) {
             <div className="main-content">
                 <section className="room-area">
                     <div className="desk-background">
-                        <div
-                            className={`placeholder-item diary ${isDiaryOpen ? 'open' : ''}`}
-                            onClick={handleDiaryClick}
-                        >
-                            {/* 💡 조건부 렌더링: 일기장 상태에 따라 이미지 교체 */}
-                            {isDiaryOpen ? (
-                                <img
-                                    src="/images/unlock_diary.png"  /* 👈 누끼 딴 일기장 펼쳐진 이미지 (혹은 준비한 이미지) */
-                                    alt="열린 일기장"
-                                    className="item-image"
-                                />
-                            ) : (
-                                <img
-                                    src="/images/lock_diary.png" /* 👈 잠긴 일기장 이미지 */
-                                    alt="잠긴 일기장"
-                                    className="item-image"
-                                />
-                            )}
+                        {/* 1. 일기장 */}
+                        <div className={`placeholder-item diary ${isDiaryOpen ? 'open' : ''}`} onClick={handleDiaryClick}>
+                            <img src={isDiaryOpen ? "/images/unlock_diary.png" : "/images/lock_diary.png"} className="item-image" alt="일기장" />
                         </div>
 
-                        <div
-                            className={`placeholder-item board-game ${isGameSolved ? 'open' : ''}`}
-                            onClick={handleGameClick}
-                        >
-                            {/* 💡 보드게임도 정답을 맞혔을 때 이미지를 다르게 줄 수 있어요 */}
-                            <img
-                                src={isGameSolved ? "/images/board_game.png" : "/images/board_game.png"}
-                                alt="보드게임"
-                                className="item-image"
-                            />
+                        {/* 2. 보드게임 */}
+                        <div className={`placeholder-item board-game ${isGameSolved ? 'solved' : ''}`} onClick={handleGameClick}>
+                            <img src="/images/board_game.png" className="item-image" alt="보드게임" />
                         </div>
 
-                        <div
-                            className={`placeholder-item chest ${isGameSolved ? 'glow' : ''}`}
-                            onClick={handleChestClick}
-                        >
-                            {/* 💡 secret_box.png 적용! 정답을 맞히면 glow 효과가 CSS에서 나타납니다 */}
-                            <img
-                                src="/images/lock_box.png"
-                                alt="보물상자"
-                                className="item-image"
-                            />
+                        {/* 3. 보물상자 */}
+                        <div className={`placeholder-item chest ${isFinalPointReached ? 'glow' : ''}`} onClick={handleChestClick}>
+                            <img src="/images/lock_box.png" className="item-image" alt="보물상자" />
                         </div>
                     </div>
                 </section>
 
+                {/* --- 오른쪽: 보물지도 영역 (이미지 기반) --- */}
                 <section className="map-area">
-                    <div className="map-background">
-                        <h2>우리의 보물지도</h2>
-                        <div className={`checkpoint start ${isDiaryOpen ? 'cleared' : ''}`}>START</div>
-                        <div
-                            className={`checkpoint point1 ${isDiaryRead ? 'unlocked' : ''}`}
-                            onClick={() => isDiaryRead && setShowMemory(true)}
-                        >
-                            {isDiaryRead ? "📍 첫 데이트" : "?"}
+                    <div className="map-container">
+                        {/* 🗺️ 실제 지도 이미지 배치 */}
+                        <img
+                            src="/images/map.png"
+                            alt="보물지도"
+                            className="map-base-image"
+                        />
+
+                        {/* 📍 지도 위에 띄울 체크포인트들 */}
+                        <div className="map-checkpoints">
+                            {/* START: 처음부터 활성화(active) */}
+                            <div
+                                className={`checkpoint start ${isStartClicked ? 'cleared' : 'active'}`}
+                                onClick={handleStartClick}
+                            >
+                                START
+                            </div>
+
+                            {/* 📍 첫 데이트: 일기장 확인 후 활성화 */}
+                            <div
+                                className={`checkpoint point1 ${isDiaryRead ? (isMemoryChecked ? 'cleared' : 'active') : ''}`}
+                                onClick={handlePoint1Click}
+                            >
+                                {isDiaryRead ? "📍" : "?"}
+                            </div>
+
+                            {/* X 최종지점: 보드게임 확인 후 활성화 */}
+                            <div
+                                className={`checkpoint end ${isGameRead ? (isFinalPointReached ? 'cleared' : 'active') : ''}`}
+                                onClick={handleFinalPointClick}
+                            >
+                                X
+                            </div>
                         </div>
-                        <div className="checkpoint end">X</div>
                     </div>
                 </section>
             </div>
 
-            {/* 🔐 모달 1: 일기장 비밀번호 */}
+            {/* --- 모달/상세창 구성 --- */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3>🔒 비밀번호 입력</h3>
-                        <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} maxLength={6} placeholder="날짜를 입력해줘❤️" />
+                        <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} maxLength={6} placeholder="yymmdd" />
                         <div className="modal-buttons"><button onClick={handleConfirm}>확인</button></div>
                     </div>
                 </div>
             )}
 
-            {/* 📖 상세 1: 일기장 (기존 스타일 유지) */}
-            {showDetail && (
-                <div className="diary-detail-overlay" onClick={handleCloseDiary}>
+            {(showDetail || showGameDetail) && (
+                <div className="diary-detail-overlay" onClick={showDetail ? handleCloseDiary : handleCloseGameDetail}>
                     <div className="diary-paper" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-diary" onClick={handleCloseDiary}>X</button>
+                        <button className="close-diary" onClick={showDetail ? handleCloseDiary : handleCloseGameDetail}>X</button>
                         <div className="diary-content">
                             <div className="diary-left">
-                                <div className="photo-frame"><div className="photo-placeholder">📸 우리의 첫 여행 사진</div></div>
-                                <div className="photo-frame second"><div className="photo-placeholder">📸 웃고 있는 우리</div></div>
+                                <div className="photo-frame"><div className="photo-placeholder">📸 {showDetail ? "우리의 첫 여행" : "보드게임 카페"}</div></div>
+                                <div className="photo-frame second"><div className="photo-placeholder">📸 {showDetail ? "웃고 있는 우리" : "열중하는 모습"}</div></div>
                             </div>
                             <div className="diary-right">
-                                <h2 className="handwriting-title">2026년 3월 24일</h2>
+                                <h2 className="handwriting-title">{showDetail ? "2026년 3월 24일" : "첫 데이트, 보드게임"}</h2>
                                 <p className="handwriting-text">
-                                    안녕? 드디어 일기장을 열었네!<br/><br/>
-                                    우리가 함께한 시간들이 벌써 이만큼이나 쌓였어.
-                                    처음 만났던 날의 떨림부터, 모든 순간이 나에겐 보물 같아.<br/><br/>
-                                    지도의 다음 목적지에도 네가 좋아할 선물을 준비했어.
-                                    어서 가보자! 사랑해 ❤️
+                                    {showDetail ?
+                                        "안녕? 드디어 일기장을 열었네!\n\n우리가 함께한 시간들이 벌써 이만큼이나 쌓였어. 처음 만났던 날의 떨림부터, 모든 순간이 나에겐 보물 같아.\n\n지도의 다음 목적지에도 네가 좋아할 선물을 준비했어. 어서 가보자! 사랑해 ❤️"
+                                        :
+                                        "그날 기억나? 튜링머신 하나 풀겠다고\n둘이 머리 맞대고 끙끙거렸던 거.\n\n네가 숫자 하나 맞힐 때마다 아이처럼 좋아하던 모습이 얼마나 예뻤는지 몰라.\n\n우리는 복잡한 논리 문제보다 더 완벽한 답을 찾은 것 같아. 바로 우리!"}
                                 </p>
                             </div>
                         </div>
@@ -176,51 +219,23 @@ export default function SecretRoom({ onEnd }) {
                 </div>
             )}
 
-            {/* 🎲 모달 2: 보드게임 퀴즈 */}
             {showGamePuzzle && (
                 <div className="modal-overlay" onClick={() => setShowGamePuzzle(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3>🎲 보드게임 퀴즈</h3>
                         <p>우리가 처음으로 함께 했던<br/>보드게임의 이름은?</p>
-                        <input type="text" value={gameAnswer} onChange={(e) => setGameAnswer(e.target.value)} placeholder="보드게임 이름을 입력해줘❤️" />
+                        <input type="text" value={gameAnswer} onChange={(e) => setGameAnswer(e.target.value)} placeholder="정답 입력" />
                         <div className="modal-buttons"><button onClick={handleGameConfirm}>정답 확인</button></div>
                     </div>
                 </div>
             )}
 
-            {/* 🎲 상세 2: 보드게임 추억 (일기장과 동일한 스타일) */}
-            {showGameDetail && (
-                <div className="diary-detail-overlay" onClick={() => setShowGameDetail(false)}>
-                    <div className="diary-paper" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-diary" onClick={() => setShowGameDetail(false)}>X</button>
-                        <div className="diary-content">
-                            <div className="diary-left">
-                                <div className="photo-frame"><div className="photo-placeholder">📸 보드게임 카페에서</div></div>
-                                <div className="photo-frame second"><div className="photo-placeholder">📸 튜링머신 하던 날</div></div>
-                            </div>
-                            <div className="diary-right">
-                                <h2 className="handwriting-title">첫 데이트, 보드게임</h2>
-                                <p className="handwriting-text">
-                                    그날 기억나? 튜링머신 하나 풀겠다고<br/>
-                                    둘이 머리 맞대고 끙끙거렸던 거.<br/><br/>
-                                    네가 숫자 하나 맞힐 때마다 아이처럼 좋아하던
-                                    모습이 얼마나 예뻤는지 몰라.<br/><br/>
-                                    우리는 복잡한 논리 문제보다
-                                    더 완벽한 답을 찾은 것 같아. 바로 우리!
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* 📍 모달 3: 지도 추억 힌트 */}
             {showMemory && (
-                <div className="modal-overlay" onClick={() => setShowMemory(false)}>
+                <div className="modal-overlay" onClick={handleCloseMemory}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3>📍 첫 데이트의 기억</h3>
                         <p>"그날 보드게임 카페 기억나?<br/>네가 이기려고 집중하던 그 표정이 생각나!"</p>
-                        <div className="modal-buttons"><button onClick={() => setShowMemory(false)}>추억 간직하기</button></div>
+                        <div className="modal-buttons"><button onClick={handleCloseMemory}>확인</button></div>
                     </div>
                 </div>
             )}
