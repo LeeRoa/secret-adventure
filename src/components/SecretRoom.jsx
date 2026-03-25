@@ -10,7 +10,7 @@ export default function SecretRoom({ onEnd }) {
     const [isMemoryChecked, setIsMemoryChecked] = useState(false);     // 4. 📍 첫 데이트 확인 완료 (🎲 활성화)
     const [isGameSolved, setIsGameSolved] = useState(false);           // 5. 보드게임 정답 통과
     const [isGameRead, setIsGameRead] = useState(false);               // 6. 보드게임 추억 정독 완료 (X 활성화)
-
+    const [isFakeClicked, setIsFakeClicked] = useState(false);
     const [isFinalPointReached, setIsFinalPointReached] = useState(false); // 7. 지도의 X 클릭 (🎁 해금)
 
     // --- UI 모달 상태 ---
@@ -100,13 +100,23 @@ export default function SecretRoom({ onEnd }) {
         setIsGameRead(true); // 💡 결과: 지도의 X 활성화
     };
 
-    // ❌ [STEP 5] 최종 목적지 X 클릭 (보드게임 정독 후 가능)
+    // ❌ [진짜 X 클릭]
     const handleFinalPointClick = () => {
         if (isGameRead) {
             setIsFinalPointReached(true);
-            alert("드디어 마지막 목적지에 도착했어! 이제 보물상자를 열어봐! 🎁");
+            alert("정답이야! 🎯 마지막 목적지에 도착했어! 이제 보물상자를 열어봐! 🎁");
         } else {
             alert("보드게임의 비밀을 먼저 풀어야 이 지점에 올 수 있어! 🎲");
+        }
+    };
+
+    // 💣 [NEW: 가짜 X 클릭]
+    const handleFakePointClick = () => {
+        if (isGameRead) {
+            setIsFakeClicked(true); // 상태를 꽝으로 변경!
+            alert("앗! 꽝이야 😜 여긴 가짜 보물이 숨겨져 있어. 다른 'X'를 찾아봐!");
+        } else {
+            alert("보드게임의 비밀을 먼저 풀어야 해! 🎲");
         }
     };
 
@@ -140,7 +150,12 @@ export default function SecretRoom({ onEnd }) {
 
                         {/* 3. 보물상자 */}
                         <div className={`placeholder-item chest ${isFinalPointReached ? 'glow' : ''}`} onClick={handleChestClick}>
-                            <img src="/images/lock_box.png" className="item-image" alt="보물상자" />
+                            <img
+                                /* 💡 조건부 렌더링: 진짜 X를 찾았으면 열린 상자, 아니면 잠긴 상자 */
+                                src={isFinalPointReached ? "/images/unlock_box.png" : "/images/lock_box.png"}
+                                className="item-image"
+                                alt="보물상자"
+                            />
                         </div>
                     </div>
                 </section>
@@ -167,18 +182,28 @@ export default function SecretRoom({ onEnd }) {
 
                             {/* 📍 첫 데이트: 일기장 확인 후 활성화 */}
                             <div
-                                className={`checkpoint point1 ${isDiaryRead ? (isMemoryChecked ? 'cleared' : 'active') : ''}`}
+                                className={`checkpoint point1 ${isDiaryRead ? (isMemoryChecked ? 'cleared' : 'unlocked') : ''}`}
                                 onClick={handlePoint1Click}
                             >
-                                {isDiaryRead ? "📍" : "?"}
+                                {!isDiaryRead ? "?" : (isMemoryChecked ? "❤️" : "?")}
                             </div>
 
-                            {/* X 최종지점: 보드게임 확인 후 활성화 */}
+                            {/* 💣 가짜 X 지점 */}
                             <div
-                                className={`checkpoint end ${isGameRead ? (isFinalPointReached ? 'cleared' : 'active') : ''}`}
+                                className={`checkpoint end fake ${isGameRead && !isFakeClicked ? 'active' : ''} ${isFakeClicked ? 'clicked' : ''}`}
+                                onClick={handleFakePointClick}
+                            >
+                                {/* 💡 FontAwesome 대신 <img> 사용 (로아님이 제공해주신 둥근 'X' 이미지 적용) */}
+                                <img src="/images/xmark-round.png" alt="X" />
+                            </div>
+
+                            {/* 🎯 진짜 X 지점 */}
+                            <div
+                                className={`checkpoint end real ${isGameRead ? (isFinalPointReached ? 'cleared' : 'active') : ''}`}
                                 onClick={handleFinalPointClick}
                             >
-                                X
+                                {/* 💡 FontAwesome 대신 <img> 사용 (로아님이 제공해주신 둥근 'X' 이미지 적용) */}
+                                <img src="/images/xmark-round.png" alt="X" />
                             </div>
                         </div>
                     </div>
