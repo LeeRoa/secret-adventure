@@ -3,6 +3,7 @@ import './MemoryGallery.css';
 
 export default function MemoryGallery() {
     const audioRef = useRef(null); // 🎵 오디오 객체 저장
+    const sakuraContainerRef = useRef(null); // ⭐ 벚꽃을 담을 전용 유리창
 
     useEffect(() => {
         // 🎵 엔딩용 감동적인 BGM 설정
@@ -27,6 +28,31 @@ export default function MemoryGallery() {
                 audioRef.current = null;
             }
         };
+    }, []);
+
+    // 🌸 2. 벚꽃 내리는 효과용 useEffect (스크롤 완벽 대응 버전)
+    useEffect(() => {
+        const createPetal = () => {
+            if (!sakuraContainerRef.current) return;
+
+            const petal = document.createElement('div');
+            petal.className = 'sakura';
+
+            const size = Math.random() * 10 + 10 + 'px';
+            petal.style.left = Math.random() * 100 + 'vw'; // 화면 가로 전체에서 랜덤
+            petal.style.width = size;
+            petal.style.height = size;
+            petal.style.animationDuration = Math.random() * 3 + 6 + 's'; // 6~9초로 조금 더 여유롭게
+
+            sakuraContainerRef.current.appendChild(petal);
+
+            setTimeout(() => {
+                if (petal.parentNode) petal.remove();
+            }, 9000); // 애니메이션 시간에 맞춰 삭제 시간도 연장
+        };
+
+        const interval = setInterval(createPetal, 300);
+        return () => clearInterval(interval);
     }, []);
 
     const memories = [
@@ -69,6 +95,7 @@ export default function MemoryGallery() {
 
     return (
         <div className="gallery-wrapper fade-in-active">
+            <div ref={sakuraContainerRef} className="sakura-container"></div>
             <header className="gallery-header">
                 <h1>Our Treasure Memories</h1>
                 <p>우리가 함께한 소중한 순간들</p>
