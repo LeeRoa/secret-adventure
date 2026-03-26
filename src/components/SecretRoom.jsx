@@ -1,7 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './SecretRoom.css';
 
 export default function SecretRoom({ onEnd }) {
+    const audioRef = useRef(null);
+
+    useEffect(() => {
+        // 🎵 방에 들어오자마자 재생할 새로운 BGM (경로는 본인의 파일명에 맞게 수정하세요)
+        audioRef.current = new Audio('/sounds/room_bgm.mp3');
+        audioRef.current.loop = true;
+        audioRef.current.volume = 0.4; // 배경음이라 조금 더 잔잔하게 40%
+
+        const playBgm = async () => {
+            try {
+                await audioRef.current.play();
+            } catch (err) {
+                console.log("자동 재생이 차단되었습니다. 클릭 후 재생됩니다.", err);
+            }
+        };
+
+        playBgm();
+
+        // 컴포넌트가 사라질 때(onEnd 실행 시) 음악 정지
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
+    }, []);
+
     // --- 퀘스트 진행 상태 (순차적 해금 로직) ---
     const [isStartClicked, setIsStartClicked] = useState(false);       // 1. 지도 START
     const [isDiaryOpen, setIsDiaryOpen] = useState(false);             // 2. 일기장 비밀번호 통과
@@ -130,6 +157,7 @@ export default function SecretRoom({ onEnd }) {
     // 🎁 [STEP 6] 보물상자 클릭 (X 도달 후 가능)
     const handleChestClick = () => {
         if (isFinalPointReached) {
+            if (audioRef.current) audioRef.current.pause();
             onEnd(); // 최종 엔딩 화면으로
         } else {
             showAlert("지도의 마지막 목적지(X)를 먼저 찾아야 상자가 열릴 것 같아!");
