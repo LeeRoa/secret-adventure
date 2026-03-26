@@ -272,17 +272,51 @@ export default function SecretRoom({ onEnd }) {
                     <div className="diary-paper" onClick={(e) => e.stopPropagation()}>
                         <button className="close-diary" onClick={showDetail ? handleCloseDiary : handleCloseGameDetail}>X</button>
                         <div className="diary-content">
+
+                            {/* 📸 왼쪽: 폴라로이드 사진 영역 */}
                             <div className="diary-left">
-                                <div className="photo-frame"><div className="photo-placeholder">📸 {showDetail ? "우리의 첫 여행" : "보드게임 카페"}</div></div>
-                                <div className="photo-frame second"><div className="photo-placeholder">📸 {showDetail ? "웃고 있는 우리" : "열중하는 모습"}</div></div>
+                                {/* 첫 번째 사진 */}
+                                <div className="photo-frame">
+                                    <div className="photo-placeholder">
+                                        <img
+                                            src={showDetail ? "/images/love/첫데이트.jpg" : "/images/love/튜링머신.jpg"}
+                                            alt="추억사진1"
+                                            className="contained-image" /* CSS를 위한 클래스명 */
+                                        />
+                                    </div>
+                                    <div className="photo-caption">
+                                        {showDetail ? "사귀고 나서 첫 주말 데이트😍" : "처음 보드게임 카페에서 한 게임🎲"}
+                                    </div>
+                                </div>
+
+                                {/* 두 번째 사진 */}
+                                <div className="photo-frame second">
+                                    <div className="photo-placeholder">
+                                        <img
+                                            src={showDetail ? "/images/love/부산여행_기차.jpg" : "/images/love/준서가 처음 새우까준 날.jpg"}
+                                            alt="추억사진2"
+                                            className="contained-image"
+                                        />
+                                    </div>
+                                    <div className="photo-caption">
+                                        {showDetail ? "부산 가는 중인 우리🚅" : "사귀기 직전 새우까주는 준서🦐"}
+                                    </div>
+                                </div>
                             </div>
+
+                            {/* ✍️ 오른쪽: 편지/일기 내용 */}
                             <div className="diary-right">
                                 <h2 className="handwriting-title">{showDetail ? "2026년 3월 24일" : "첫 데이트, 보드게임"}</h2>
                                 <p className="handwriting-text">
                                     {showDetail ?
-                                        "안녕? 드디어 일기장을 열었네!\n\n우리가 함께한 시간들이 벌써 이만큼이나 쌓였어. 처음 만났던 날의 떨림부터, 모든 순간이 나에겐 보물 같아.\n\n지도의 다음 목적지에도 네가 좋아할 선물을 준비했어. 어서 가보자! 사랑해 ❤️"
+                                        "안녕? 드디어 일기장을 열었네!\n\n" +
+                                        "우리가 함께한 시간들이 벌써 이만큼이나 쌓였어. 진접에서 밤샜을 때, 둘이 만났던 날, 지금 내 옆에서 자고 있는 너, 모든 순간순간이 나에겐 보물 같아.\n\n" +
+                                        "지도의 다음 목적지에도 네가 좋아할 선물을 준비했어. 어서 가보자! 사랑해 자기야 ❤️"
                                         :
-                                        "그날 기억나? 튜링머신 하나 풀겠다고\n둘이 머리 맞대고 끙끙거렸던 거.\n\n네가 숫자 하나 맞힐 때마다 아이처럼 좋아하던 모습이 얼마나 예뻤는지 몰라.\n\n우리는 복잡한 논리 문제보다 더 완벽한 답을 찾은 것 같아. 바로 우리!"}
+                                        "그날 기억나? \n튜링머신 룰 숙지 안되고 어려운거 하나 풀겠다고 둘이 머리 맞대고 끙끙거렸던 거.\n\n" +
+                                        "네가 숫자 하나 맞힐 때마다 아이처럼 좋아하던 모습이 얼마나 귀여웠는지 몰라.\n" +
+                                        "너무 어색한 그날 분위기를 풀어주려고 애쓰던 네가 너무 이뻐보였어.\n\n"+
+                                        "그날 튜링머신 복잡한 논리적인 문제보다 더 완벽한 답을 찾은 것 같았어. 그건 바로 너야."}
                                 </p>
                             </div>
                         </div>
@@ -304,8 +338,8 @@ export default function SecretRoom({ onEnd }) {
             {showMemory && (
                 <div className="modal-overlay" onClick={handleCloseMemory}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <h3>📍 첫 데이트의 기억</h3>
-                        <p>"그날 보드게임 카페 기억나?<br/>네가 이기려고 집중하던 그 표정이 생각나!"</p>
+                        <h3>❤️ 첫 데이트의 기억</h3>
+                        <p>"내가 먼저 너한테 밥먹자고 만나자 했던 그날 기억나?<br/>그날 보드게임 카페에서 네가 이기려고 집중하던 그 표정이 생각나"</p>
                         <div className="modal-buttons"><button onClick={handleCloseMemory}>확인</button></div>
                     </div>
                 </div>
