@@ -87,7 +87,7 @@
 }
 
 .ending-text {
-    font-size: 16px !important;
+    font-size: 18px !important;
 }
 
 /* --- 💌 마지막 편지 영역 --- */
@@ -133,7 +133,6 @@
     height: 100vh;
     pointer-events: none; /* 클릭 방해 금지 */
     z-index: 9999; /* 사진, 글씨보다 무조건 위에 오도록 */
-    overflow: hidden; /* 화면 밖으로 나간 벚꽃은 안 보이게 정리 */
 }
 
 /* 🌸 개별 벚꽃잎 스타일 */
@@ -159,7 +158,7 @@
         opacity: 1; /* ⭐ 90% 떨어질 때까지 투명해지지 않고 계속 선명하게 유지!! */
     }
     100% {
-        transform: translateY(120vh) rotate(720deg) translateX(100px);
-        opacity: 0; /* 완전히 바닥으로 사라질 때쯤 투명해짐 */
+        transform: translateY(110vh) rotate(720deg) translateX(100px);
+        opacity: 0;
     }
 }

@@ -38,20 +38,28 @@ export default function MemoryGallery() {
             const petal = document.createElement('div');
             petal.className = 'sakura';
 
-            const size = Math.random() * 10 + 10 + 'px';
-            petal.style.left = Math.random() * 100 + 'vw'; // 화면 가로 전체에서 랜덤
+            const size = Math.random() * 10 + 8 + 'px'; // 크기 살짝 다양하게
+            petal.style.left = Math.random() * 100 + 'vw';
             petal.style.width = size;
             petal.style.height = size;
-            petal.style.animationDuration = Math.random() * 3 + 6 + 's'; // 6~9초로 조금 더 여유롭게
+
+            // 🌸 떨어지는 속도를 7~11초 사이로 랜덤하게 주면 더 자연스러워요
+            const duration = Math.random() * 4 + 7;
+            petal.style.animationDuration = duration + 's';
+
+            // 🌸 투명도도 랜덤하게 주면 깊이감이 생깁니다
+            petal.style.opacity = Math.random() * 0.5 + 0.5;
 
             sakuraContainerRef.current.appendChild(petal);
 
+            // 애니메이션이 확실히 끝난 뒤에 삭제 (duration보다 넉넉하게 12초)
             setTimeout(() => {
                 if (petal.parentNode) petal.remove();
-            }, 9000); // 애니메이션 시간에 맞춰 삭제 시간도 연장
+            }, 12000);
         };
 
-        const interval = setInterval(createPetal, 300);
+        // 벚꽃이 너무 띄엄띄엄 나오지 않게 간격을 200ms 정도로 줄여보세요
+        const interval = setInterval(createPetal, 250);
         return () => clearInterval(interval);
     }, []);
 
@@ -241,52 +249,59 @@ export default function MemoryGallery() {
     ];
 
     return (
-        <div className="gallery-wrapper fade-in-active">
-            <div ref={sakuraContainerRef} className="sakura-container"></div>
-            <header className="gallery-header">
-                <h1>Our Treasure Memories</h1>
-                <p>우리가 함께한 소중한 순간들</p>
-            </header>
+        <> {/* ⭐ 1. 전체를 감싸는 빈 태그(Fragment) 시작 */}
 
-            <div className="memory-scroll-area">
-                {memories.map((m) => (
-                    <div key={m.id} className="memory-card">
-                        <div className="polaroid">
-                            <div className="polaroid-photo"> {/* 📸 정사각형 영역으로 감싸기 */}
-                                <img
-                                    src={m.img}
-                                    alt={m.title}
-                                    onError={(e) => e.target.src = 'https://via.placeholder.com/300x300?text=Photo'}
-                                    className="contained-image"
-                                />
+            {/* 🌸 2. 벚꽃 컨테이너를 wrapper 밖으로 완전히 독립시켰습니다! */}
+            <div ref={sakuraContainerRef} className="sakura-container"></div>
+
+            {/* 👇 기존 갤러리 영역은 그대로 둡니다 */}
+            <div className="gallery-wrapper fade-in-active">
+                <header className="gallery-header">
+                    <h1>Our Treasure Memories</h1>
+                    <p>우리가 함께한 소중한 순간들</p>
+                </header>
+
+                <div className="memory-scroll-area">
+                    {memories.map((m) => (
+                        <div key={m.id} className="memory-card">
+                            <div className="polaroid">
+                                <div className="polaroid-photo">
+                                    <img
+                                        src={m.img}
+                                        alt={m.title}
+                                        onError={(e) => e.target.src = 'https://via.placeholder.com/300x300?text=Photo'}
+                                        className="contained-image"
+                                    />
+                                </div>
+                                <div className="polaroid-info">
+                                    <span>{m.title}</span>
+                                    <span>{m.date}</span>
+                                </div>
                             </div>
-                            <div className="polaroid-info">
-                                <span>{m.title}</span>
-                                <span>{m.date}</span>
+                            <div className="memory-comment">
+                                <p className="handwriting-text ending-text">{m.text}</p>
                             </div>
                         </div>
-                        <div className="memory-comment">
-                            <p className="handwriting-text ending-text">{m.text}</p>
-                        </div>
+                    ))}
+                </div>
+
+                <footer className="final-letter">
+                    <div className="letter-paper">
+                        <h2>To. 사랑하는 준서에게</h2>
+                        <p>
+                            모든 미션을 완료하고 이 글을 끝까지 읽어줘서 고마워.<br/>
+                            지도를 따라 추억을 만들어온 이 여정처럼,<br/>
+                            앞으로도 우리만의 보물을 찾아가자.<br/>
+                            항상 내 옆에서 웃게해주는 네가 나한테는 가장 큰 선물이야.
+                            나도 너를 항상 웃게 만들어 줄게.
+                            <br/>생일 너무 축하해 준서야.
+                            <br/><br/>
+                            <b>사랑해 이준서❤️</b>
+                        </p>
                     </div>
-                ))}
+                </footer>
             </div>
 
-            <footer className="final-letter">
-                <div className="letter-paper">
-                    <h2>To. 사랑하는 준서에게</h2>
-                    <p>
-                        모든 미션을 완료하고 이 글을 끝까지 읽어줘서 고마워.<br/>
-                        지도를 따라 추억을 만들어온 이 여정처럼,<br/>
-                        앞으로도 우리만의 보물을 찾아가자.<br/>
-                        항상 내 옆에서 웃게해주는 네가 나한테는 가장 큰 선물이야.
-                        나도 너를 항상 웃게 만들어 줄게.
-                        <br/>생일 너무 축하해 준서야.
-                        <br/><br/>
-                        <b>사랑해 이준서❤️</b>
-                    </p>
-                </div>
-            </footer>
-        </div>
-    );
+        </>
+);
 }
