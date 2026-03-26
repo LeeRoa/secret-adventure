@@ -1,66 +1,125 @@
+/* --- 전체 배경 및 레이아웃 --- */
 .gallery-wrapper {
     background-color: #fcf8f2;
     min-height: 100vh;
-    padding: 60px 20px;
+    padding: 6vh 20px; /* 화면 비율에 맞춰 패딩 조정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 전체 가운데 정렬 */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
 }
 
 .gallery-header {
     text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: 60px;
+    color: #5c4033;
 }
 
+.gallery-header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+/* --- 추억 카드 (사진 + 글귀 묶음) --- */
 .memory-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
-    margin-bottom: 150px; /* 카드 사이 간격을 넓게 해서 하나씩 집중하게 함 */
+    gap: 25px;
+    margin-bottom: 120px; /* 카드 사이 넉넉한 간격 */
+    width: 100%;
 }
 
-/* 📸 폴라로이드 스타일 */
+/* 📸 폴라로이드 프레임 */
 .polaroid {
     background: white;
-    padding: 15px 15px 40px 15px;
-    box-shadow: 10px 10px 20px rgba(0,0,0,0.1);
-    transform: rotate(-2deg);
-    max-width: 350px;
+    padding: 15px 15px 35px 15px; /* 하단 텍스트(날짜 등)를 위한 여백 */
+    box-shadow: 5px 15px 25px rgba(0,0,0,0.08);
+    max-width: 320px;
+    width: 90%; /* 모바일에서 화면을 넘어가지 않게 */
+    transition: transform 0.3s ease;
 }
 
+/* ⭐ 꿀팁: 짝수/홀수 번째 사진을 서로 반대로 기울여서 자연스러운 앨범 연출 */
+.memory-card:nth-child(odd) .polaroid {
+    transform: rotate(-3deg);
+}
+.memory-card:nth-child(even) .polaroid {
+    transform: rotate(3deg);
+}
+
+.polaroid:hover {
+    transform: rotate(0deg) scale(1.05) !important; /* 마우스 올리면 똑바로 서기 */
+    z-index: 10;
+}
+
+/* 📸 실제 이미지 영역 (정사각형 강제 적용) */
 .polaroid img {
     width: 100%;
-    height: auto;
-    filter: sepia(20%); /* 약간의 빈티지 효과 */
+    aspect-ratio: 1 / 1; /* ⭐ 이전 방과 동일하게 완벽한 정사각형 유지 */
+    object-fit: cover; /* 찌그러지지 않고 꽉 차게 */
+    object-position: center;
+    filter: sepia(15%); /* 과하지 않은 은은한 빈티지 효과 */
+    background-color: #eee;
 }
 
+/* 사진 하단 제목 및 날짜 */
 .polaroid-info {
     margin-top: 15px;
     display: flex;
     justify-content: space-between;
-    font-size: 0.9rem;
-    color: #888;
+    font-size: 1.05rem;
+    color: #666;
 }
 
-/* ✍️ 일기장과 동일한 줄눈 스타일 적용 */
+/* ✍️ 일기장 줄눈 스타일 (손글씨 느낌) */
 .memory-comment .handwriting-text {
-    font-size: 20px;
-    line-height: 35px;
-    background-image: linear-gradient(transparent 34px, #e8d8c8 34px);
-    background-size: 100% 35px;
-    padding-top: 3px;
-    max-width: 400px;
+    color: #444;
+    font-size: 1.1rem;
+    line-height: 40px; /* 줄 간격과 배경 선 간격을 정확히 일치시킴 */
+    background-image: linear-gradient(transparent 39px, #e8d8c8 39px);
+    background-size: 100% 40px;
+    padding-top: 5px;
+    max-width: 380px;
+    width: 90vw; /* 모바일 대응 */
     text-align: center;
+    white-space: pre-wrap; /* \n 줄바꿈 인식 */
 }
 
+.ending-text {
+    font-size: 16px !important;
+}
+
+/* --- 💌 마지막 편지 영역 --- */
 .final-letter {
-    margin-top: 100px;
-    padding-bottom: 100px;
+    margin-top: 50px;
+    padding-bottom: 80px;
     text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .letter-paper {
-    background: #fffef0;
-    padding: 50px;
-    border: 2px solid #ffd700;
-    display: inline-block;
-    box-shadow: 0 0 30px rgba(255,215,0,0.2);
+    background: #fffef0; /* 따뜻한 편지지 색상 */
+    padding: 40px 30px;
+    border-radius: 8px; /* 너무 각지지 않게 살짝 둥글게 */
+    border: 1px solid #eadd8c; /* 너무 쨍한 노란색 대신 부드러운 금빛 */
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.15);
+    max-width: 400px;
+    width: 85%;
+}
+
+.letter-paper h2 {
+    font-family: 'Jua', sans-serif;
+    color: #ff7e82; /* 로아의 핑크 포인트 색상 */
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+}
+
+.letter-paper p {
+    font-family: 'Jua', sans-serif;
+    line-height: 1.8;
+    color: #555;
+    font-size: 1.1rem;
 }

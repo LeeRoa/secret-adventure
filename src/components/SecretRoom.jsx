@@ -306,7 +306,7 @@ export default function SecretRoom({ onEnd }) {
 
                             {/* ✍️ 오른쪽: 편지/일기 내용 */}
                             <div className="diary-right">
-                                <h2 className="handwriting-title">{showDetail ? "2026년 3월 24일" : "첫 데이트, 보드게임"}</h2>
+                                <h2 className="handwriting-title">{showDetail ? "2026년 3월 28일" : "첫 데이트, 보드게임"}</h2>
                                 <p className="handwriting-text">
                                     {showDetail ?
                                         "안녕? 드디어 일기장을 열었네!\n\n" +
