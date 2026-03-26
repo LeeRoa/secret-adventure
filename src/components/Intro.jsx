@@ -1,42 +1,53 @@
 import { useState, useEffect } from 'react';
+import useSound from 'use-sound';
 import './Intro.css';
+
+// 🎵 2. 사운드 파일 경로 (public 폴더 안에 sounds 폴더를 만들고 넣어주세요)
+const BGM_URL = '/sounds/main_bgm.mp3';
+const CLICK_SFX_URL = '/sounds/button_click.mp3';
 
 export default function Intro({ onStart }) {
     const [isFadingOut, setIsFadingOut] = useState(false);
+    const [showGuide, setShowGuide] = useState(false); // 모달 표시 여부
+
+    // 🎵 3. useSound 훅으로 배경음악과 효과음 준비
+    const [playBgm, { stop: stopBgm }] = useSound(BGM_URL, { loop: true, volume: 0.5 });
 
     useEffect(() => {
-        // 🌸 벚꽃 생성 로직 (Sakura-js의 핵심 로직을 리액트 버전으로 재구성)
+        // 🌸 벚꽃 생성 로직 (기존과 동일)
         const createPetal = () => {
+            const container = document.querySelector('.intro-container');
+            if (!container) return;
             const petal = document.createElement('div');
             petal.className = 'sakura';
-
-            // 랜덤한 위치, 크기, 애니메이션 속도 설정
             const size = Math.random() * 10 + 10 + 'px';
             petal.style.left = Math.random() * window.innerWidth + 'px';
             petal.style.width = size;
             petal.style.height = size;
-            petal.style.animationDuration = Math.random() * 3 + 5 + 's'; // 5~8초 사이
+            petal.style.animationDuration = Math.random() * 3 + 5 + 's';
             petal.style.opacity = Math.random();
-
-            document.querySelector('.intro-container').appendChild(petal);
-
-            // 애니메이션이 끝나면 요소 제거
-            setTimeout(() => {
-                petal.remove();
-            }, 8000);
+            container.appendChild(petal);
+            setTimeout(() => petal.remove(), 8000);
         };
-
-        // 0.3초마다 꽃잎 하나씩 생성
         const interval = setInterval(createPetal, 300);
-
-        return () => clearInterval(interval); // 화면 넘어가면 중지
+        return () => clearInterval(interval);
     }, []);
 
-    const handleClick = () => {
+    // 1. 첫 번째 버튼 클릭: 모달 열기 + 🎵 소리 재생
+    const handleStartClick = () => {
+        playBgm();   // 배경음악 시작!
+        setShowGuide(true);
+    };
+
+    // 2. 모달 안의 '진짜 시작' 버튼 클릭: 페이드아웃 후 전환 + 🎵 효과음
+    const handleFinalStart = () => {
         setIsFadingOut(true);
         setTimeout(() => {
             onStart();
-        }, 1000);
+            // 💡 만약 본 게임 화면으로 넘어갈 때 이 배경음악을 끄고 싶다면
+            // 아래 주석을 해제하세요.
+            stopBgm();
+        }, 1000 );
     };
 
     return (
@@ -46,21 +57,37 @@ export default function Intro({ onStart }) {
                     <img src="/images/logo.png" alt="로고" />
                 </header>
 
-                {/* 💌 초대장 캐릭터 카드 영역 (수정됨) */}
-                {/* 💡 envelope-wrapper character-card로 기준점을 잡습니다 */}
                 <div className="envelope-wrapper character-card">
-                    {/* 💡 이미지는 기준점 안에 꽉 차게 배치합니다 */}
                     <img src="/images/envelope.jpg" alt="초대장 캐릭터" className="character-image" />
-
-                    {/* 💡 중요: 텍스트를 이미지 하트 영역 위에 absolute로 띄웁니다 */}
                     <div className="heart-text">💌 로아가 보내는 비밀 초대장</div>
                 </div>
 
-                {/* 버튼은 카드 영역 밖에 배치해서 깔끔하게 만듭니다 */}
-                <button className="start-button" onClick={handleClick}>
+                <button className="start-button" onClick={handleStartClick}>
                     비밀 여행 시작하기
                 </button>
             </div>
+
+            {/* --- 안내 모달 레이어 --- */}
+            {showGuide && (
+                <div className="modal-overlay">
+                    <div className="guide-modal">
+                        <h3>🌸 로아의 비밀의 방 안내</h3>
+                        <p>
+                            알수없는 로아의 방에 오신 걸 환영해요!<br/>
+                            이곳은 숨겨진 단서를 찾아 로아의 소중한 추억을<br/>
+                            하나씩 완성해가는 <strong>힐링 퍼즐 여행</strong>입니다.
+                        </p>
+                        <ul className="guide-list">
+                            <li>🔍 화면 곳곳을 터치해 숨은 아이템을 찾으세요.</li>
+                            <li>🧩 획득한 단서로 잠긴 상자를 열 수 있습니다.</li>
+                            <li>🎵 배경음악과 함께 천천히 즐겨보세요.</li>
+                        </ul>
+                        <button className="modal-start-button" onClick={handleFinalStart}>
+                            여행 진짜 시작하기!
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
